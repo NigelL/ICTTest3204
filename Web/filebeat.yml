@@ -1,0 +1,50 @@
+filebeat.inputs:
+- type: filestream 
+  id: apache-filestream-id
+  paths:
+    - /var/log/apache2/*.log
+  fields:
+    apache: true
+
+filebeat.modules:
+- module: apache
+  access:
+    enabled: true
+    var.paths: ["/var/log/apache/access.log*"]
+  error:
+    enabled: true
+    var.paths: ["/var/log/apache/error.log*"]
+    
+- module: system
+  syslog:
+    enabled: true
+    var.paths: ["/var/log/syslog*"]
+  auth:
+    enabled: true
+    var.paths: ["/var/log/auth.log*"]
+
+
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: true
+# ======================= Elasticsearch template setting =======================
+setup.template.settings:
+  index.number_of_shards: 1
+# =================================== Kibana ===================================
+setup.kibana:
+  host: "localhost:5601"
+
+# ---------------------------- Elasticsearch Output ----------------------------
+
+output.elasticsearch:
+  hosts: ["localhost:9200"]
+  username: "elastic"
+  password: "changeme"
+  allow_older_versions: true
+
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~

@@ -1,0 +1,29 @@
+filebeat.inputs:
+- type: filestream 
+  id: apache-filestream-id
+  paths:
+    - /var/log/apache2/*.log
+  fields:
+    apache: true
+
+filebeat.modules:
+- module: apache
+  access:
+    enabled: true
+    var.paths: ["/var/log/apache/access.log*"]
+  error:
+    enabled: true
+    var.paths: ["/var/log/apache/error.log*"]
+    
+- module: system
+  syslog:
+    enabled: true
+    var.paths: ["/var/log/syslog*"]
+  auth:
+    enabled: true
+    var.paths: ["/var/log/auth.log*"]
+    
+output.elasticsearch:
+  hosts: ["localhost:9200"]
+  username: "elastic"
+  password: "changeme"

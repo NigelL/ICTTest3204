@@ -1,0 +1,20 @@
+RUN apt-get update
+RUN apt-get --assume-yes install sudo
+
+
+RUN curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-8.4.3-amd64.deb
+RUN sudo dpkg -i filebeat-8.4.3-amd64.deb
+RUN service apache2 start
+
+RUN chmod 777 /etc/init.d
+COPY ["filebeat.yml", "/etc/filebeat/filebeat.yml"]
+COPY ["initFilebeat", "/etc/init.d/initFilebeat"]
+RUN chmod 0744 /etc/filebeat/filebeat.yml
+RUN chmod 0777 /var/log/apache2/*.log
+RUN chmod 777 /etc/init.d/initFilebeat
+RUN chown root /etc/init.d/initFilebeat
+RUN sudo update-rc.d initFilebeat defaults
+RUN echo "LogFormat "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\" %{ms}T %p %{Host}i" vhost_combined" >> /etc/apache2/apache2.conf
+RUN filebeat modules enable apache
+
+CMD service initFilebeat start && tail -F /var/log/cron.log

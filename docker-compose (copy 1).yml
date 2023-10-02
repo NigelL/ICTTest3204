@@ -17,6 +17,7 @@ services:
   # '--profile=setup' CLI flag to Compose commands, or "up" the service by name
   # such as 'docker compose up setup'.
  
+   
   setup:
     profiles:
       - setup
@@ -112,7 +113,6 @@ services:
       interval: 40s
       retries: 100
       timeout: 10s
- 
   php:
     container_name: Web
     build: ./Web
@@ -121,8 +121,9 @@ services:
       - 80:80
     volumes:
       - ./publichtml:/var/www/html/
-    networks:
-      - elk
+    depends_on:
+      kibana:
+        condition: service_healthy
 
 networks:
   elk:
