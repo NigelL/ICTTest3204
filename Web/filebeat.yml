@@ -15,14 +15,6 @@ filebeat.modules:
     enabled: true
     var.paths: ["/var/log/apache/error.log*"]
     
-- module: system
-  syslog:
-    enabled: true
-    var.paths: ["/var/log/syslog*"]
-  auth:
-    enabled: true
-    var.paths: ["/var/log/auth.log*"]
-
 
 filebeat.config.modules:
   path: ${path.config}/modules.d/*.yml
@@ -37,7 +29,7 @@ setup.kibana:
 # ---------------------------- Elasticsearch Output ----------------------------
 
 output.elasticsearch:
-  hosts: ["localhost:9200"]
+  hosts: ["elasticsearch:9200"]
   username: "elastic"
   password: "changeme"
   allow_older_versions: true

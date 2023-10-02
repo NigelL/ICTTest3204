@@ -23,7 +23,18 @@ COPY ["initFilebeat", "/etc/init.d/initFilebeat"]
 
 RUN filebeat modules enable apache
 
+RUN echo "[supervisord]" > /etc/supervisord.conf && \
+    echo "nodaemon=true" >> /etc/supervisord.conf && \
+    echo "" >> /etc/supervisord.conf && \
+    echo "[program:apache2]" >> /etc/supervisord.conf && \
+    echo "command=apache2ctl -D FOREGROUND" >> /etc/supervisord.conf && \
+    echo "autorestart=true" >> /etc/supervisord.conf && \
+    echo "" >> /etc/supervisord.conf && \
+    echo "[program:filebeat]" >> /etc/supervisord.conf && \
+    echo "command=filebeat -e -c /etc/filebeat/filebeat.yml" >> /etc/supervisord.conf && \
+    echo "autorestart=true" >> /etc/supervisord.conf
 
 EXPOSE 80
 
-CMD ["apache2ctl", "-D", "FOREGROUND"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+
