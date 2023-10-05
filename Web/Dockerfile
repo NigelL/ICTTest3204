@@ -1,11 +1,16 @@
 FROM ubuntu:latest
 
 
-RUN apt-get update && \
-    apt-get install -y apache2
+RUN apt-get update 
+
+ENV TZ=Asia/Singapore
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN apt-get install -y apache2 php libapache2-mod-php
 
 RUN apt-get install curl
 RUN apt-get install sudo
+
 
 RUN apt-get install -y supervisor
 RUN apt-get install net-tools
