@@ -1,6 +1,7 @@
 filebeat.inputs:
 - type: filestream 
   id: apache-filestream-id
+  index: "apache-%{+yyyy.MM.dd}"
   paths:
     - /var/log/apache2/*.log
   fields:
