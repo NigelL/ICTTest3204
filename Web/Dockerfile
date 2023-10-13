@@ -10,6 +10,7 @@ RUN apt-get install -y apache2 php libapache2-mod-php
 
 RUN apt-get install curl
 RUN apt-get install sudo
+RUN apt-get -y install rsyslog
 
 
 RUN apt-get install -y supervisor
@@ -37,6 +38,10 @@ RUN echo "[supervisord]" > /etc/supervisord.conf && \
     echo "" >> /etc/supervisord.conf && \
     echo "[program:filebeat]" >> /etc/supervisord.conf && \
     echo "command=filebeat -e -c /etc/filebeat/filebeat.yml" >> /etc/supervisord.conf && \
+    echo "autorestart=true" >> /etc/supervisord.conf && \
+    echo "" >> /etc/supervisord.conf && \ 
+    echo "[program:rsyslog]" >> /etc/supervisord.conf && \
+    echo "command=rsyslogd -n" >> /etc/supervisord.conf && \
     echo "autorestart=true" >> /etc/supervisord.conf
 
 EXPOSE 80
