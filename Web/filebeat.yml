@@ -13,6 +13,11 @@ filebeat.inputs:
     - /var/log/auth.log
     - /var/log/syslog
     - /var/log/kern.log
+- type: log
+  id: tcpflow-filestream-id
+  index: "tcpflow-%{+yyyy.MM.dd}"
+  paths:
+    - /var/log/tcplog/tcpflow.log
     
 filebeat.modules:
 - module: apache

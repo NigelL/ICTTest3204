@@ -1,0 +1,37 @@
+#!/bin/bash
+
+
+log_dir="/var/www/html/upload"
+
+
+timestamp=$(date +"%Y%m%d%H%M%S")
+
+
+archive_file="logarchive$timestamp.tar.gz"
+
+
+directories="/var/log/syslog /var/log/apache2/access.log /var/www/html/index.php"
+
+
+if [ ! -d "$log_dir" ]; then
+    echo "Destination directory does not exist: $log_dir"
+    exit 1
+fi
+
+
+temp_dir=$(mktemp -d)
+
+
+for log_file in $directories; do
+    echo "$log_file"
+    cp "$log_file" "$temp_dir"
+
+done
+
+
+tar -czvf "$log_dir/$archive_file" -C "$temp_dir" .
+
+
+rm -r "$temp_dir"
+
+echo "Log files collected and archived in $log_dir/$archive_file"
